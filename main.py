@@ -14,7 +14,7 @@ conn_string = 'host={0} user = {1} dbname={2} password={3} sslmode={4}'.format(h
 conn = psycopg2.connect(conn_string)
 print("Conexão estabelecida!")
 
-#criando um cursor para pegar dados do banco
+#criando um cursor para interagir com o banco
 cur = conn.cursor()
 
 #Inserindo dados na tabela
@@ -53,12 +53,13 @@ inserir_rubricas = """INSERT INTO folha.rubricas
                     (7, 'total', 'P', 4),
                     (8, 'total', 'D', 4)
                     """
-#obter_codigo_colaboradores = "SELECT  cod_colab FROM  folha.colaboradores"
-#cur.execute(obter_codigo_colaboradores)
-#codigo = cur.fetchall()
-#print(codigo)
-fake = Faker()
-date = fake.date()
+#executando a query
+cur.execute(inserir_carreiras)
+cur.execute(inserir_cargos)
+cur.execute(inserir_grupos)
+cur.execute(inserir_rubricas)
+
+
 inserir_evolucoes_funcionais = """INSERT INTO folha.evolucoes_funcionais
                                   VALUES
                                  (3837, DATE '2017-12-17', 1, 1),
@@ -103,7 +104,7 @@ inserir_evolucoes_funcionais = """INSERT INTO folha.evolucoes_funcionais
                                  (6188, DATE '2021-03-17', 40, 4)
                                  """
 
-#cur.execute(inserir_evolucoes_funcionais)
+cur.execute(inserir_evolucoes_funcionais)
 
 inserir_folha = """INSERT INTO folha.folhas_pagamentos
                                   VALUES
@@ -152,7 +153,7 @@ inserir_folha = """INSERT INTO folha.folhas_pagamentos
                                   (2021, 03, 'R', 'completa')
                                   """
 
-#cur.execute(inserir_folha)
+cur.execute(inserir_folha)
 
 inserir_lancamentos = """INSERT INTO folha.lancamentos
                                   VALUES
@@ -175,57 +176,36 @@ inserir_lancamentos = """INSERT INTO folha.lancamentos
                                   (2019, 01, 'R', 1, 3837, DATE '2017-12-17', 2600.00)
                                   """
 
-#cur.execute(inserir_lancamentos)
+cur.execute(inserir_lancamentos)
 
 ####-----------------------####
 
 #Extração de dados
 
-#select a.mat_alu matricula, a.nom_alu nome, c.nom_curso curso, a.dat_nasc
-#from alunos a join cursos c on a.cod_curso = c.cod_curso and a.cod_curso = 44
-#order by dat_nasc desc
 
 extraindo_dados_e_preenchendo_dw_cargos = "INSERT INTO folhadw.dm_cargos SELECT f.cod_cargo , f.dsc_cargo, c.dsc_carreira from folha.cargos f join folha.carreiras c on f.cod_carreira = c.cod_carreira"
-#extraindo_dados_dm_cargos = "SELECT f.cod_cargo , f.dsc_cargo, c.dsc_carreira from folha.cargos f join folha.carreiras c on f.cod_carreira = c.cod_carreira"
-#cur.execute(extraindo_dados_dm_cargos)
-#rows = cur.fetchall()
-#print(rows)
-#--alimentando a tabela dm cargos--#
-#for r in rows:
- #   inserindo = "INSERT INTO folhadw.dm_cargos VALUES ('"+str(r)+"')"
-#cur.execute(extraindo_dados_e_preenchendo_dw_cargos)
+cur.execute(extraindo_dados_e_preenchendo_dw_cargos)
 
 extraindo_dados_e_preenchendo_dm_rubricas = "INSERT INTO folhadw.dm_rubricas SELECT r.cod_rubrica, g.dsc_grupo, r.dsc_rubrica, r.tpo_rubrica  from folha.rubricas r join folha.grupos_rubricas g on r.cod_grupo = g.cod_grupo"
-#cur.execute(extraindo_dados_e_preenchendo_dm_rubricas)
+cur.execute(extraindo_dados_e_preenchendo_dm_rubricas)
+
 extraindo_dados_e_preenchendo_dm_setores = "INSERT INTO folhadw.dm_setores SELECT s.cod_setor, u.dsc_und, u.cid_und, u.uf_und, s.dsc_setor from folha.setores s join folha.unidades u on s.cod_und = u.cod_und"
-#cur.execute(extraindo_dados_e_preenchendo_dm_setores)
+cur.execute(extraindo_dados_e_preenchendo_dm_setores)
+
 preenchendo_dados_dm_faixas_etarias = """INSERT INTO folhadw.dm_faixas_etarias
                                          VALUES
                                          (1, 'primeira', 18, 21),
                                          (2, 'segunda', 22, 30),
                                          (3, 'terceira', 31, 45),
                                          (4, 'quarta', 46, 80)"""
-#cur.execute(preenchendo_dados_dm_faixas_etarias)
+cur.execute(preenchendo_dados_dm_faixas_etarias)
 
 extraindo_dados_e_preenchendo_dm_tempos_folhas = "INSERT INTO folhadw.dm_tempos_folhas (ano, mes) SELECT ano, mes FROM folha.folhas_pagamentos"
 cur.execute(extraindo_dados_e_preenchendo_dm_tempos_folhas)
-#Faixa etária: até 21 anos, de 21 a 30 anos, de 31 a 45 anos, acima de 45 anos; Tempo de
-#serviço: até 1 ano, de 1 até 10 anos, de 11 a 20 anos, de 21 a 30 anos, acima de 31 anos
-#inserir_codigo_colab = "INSERT INTO  cod_colab FROM folha.evolucoes_funcionais VALUES ('"+str(codigo)+"')"
-#cur.execute(inserir_codigo_colab)
-
-#executando a query
-#cur.execute(inserir_carreiras)
-#cur.execute(inserir_cargos)
-#cur.execute(inserir_grupos)
-#cur.execute(inserir_rubricas)
 
 
 
-#rows = cur.fetchall()
 
-#for r in rows:
- #   print (f"cod_colab {r[0]} nom_colab {r[1]}")
 
 
 
