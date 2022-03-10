@@ -180,7 +180,7 @@ cur.execute(inserir_lancamentos)
 
 ####-----------------------####
 
-#Extração de dados
+#Extração de dados e preenchimento do banco dimensional
 
 
 extraindo_dados_e_preenchendo_dw_cargos = "INSERT INTO folhadw.dm_cargos SELECT f.cod_cargo , f.dsc_cargo, c.dsc_carreira from folha.cargos f join folha.carreiras c on f.cod_carreira = c.cod_carreira"
